@@ -35,11 +35,16 @@ export class UsersService {
   }
 
   async findByUsername(username: string) {
-    return await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: {
         username: username,
       },
+      relations: {
+        wishes: true,
+        wishLists: true,
+      },
     });
+    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {

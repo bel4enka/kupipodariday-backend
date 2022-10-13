@@ -17,8 +17,8 @@ import { User } from './entities/user.entity';
 import { JwtGuard } from '../guards/jwt.guard';
 import { WishesService } from '../wishes/wishes.service';
 import { Wish } from '../wishes/entities/wish.entity';
-import {UpdateUserDto} from "./dto/update-user.dto";
-import {UpdateResult} from "typeorm";
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateResult } from 'typeorm';
 
 @Controller('users')
 export class UsersController {
@@ -40,10 +40,26 @@ export class UsersController {
   }
 
   @UseGuards(JwtGuard)
+  @Get(':username')
+  async findUserByUserName(@Param('username') username: string) {
+    const user = await this.usersService.findByUsername(username);
+    return user;
+  }
+
+  @UseGuards(JwtGuard)
   @Get('me/wishes')
   findWishesMyUser(@Req() req): Promise<Wish[]> {
     const { id } = req.user;
     return this.wishesService.findWishesByUserId(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get(':username/wishes')
+  async findWishesByUserName(@Param('username') username: string) {
+    const user = await this.usersService.findByUsername(username);
+    const wish = await this.wishesService.findWishesByUserId(user.id);
+    console.log(wish);
+    return wish;
   }
 
   @UseGuards(JwtGuard)
@@ -69,7 +85,6 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UpdateResult> {
     const { id } = req.user;
-    console.log(id);
     return this.usersService.update(id, updateUserDto);
   }
   @UseGuards(JwtGuard)
