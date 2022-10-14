@@ -7,13 +7,17 @@ import {
   Param,
   Delete,
   UseGuards,
-  Req,
+  Req, ForbiddenException,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { JwtGuard } from '../guards/jwt.guard';
 import { Wish } from './entities/wish.entity';
+import {isOwner} from "../utils/utils";
+import {
+  ConflictException
+} from "@nestjs/common/exceptions/conflict.exception";
 
 @Controller('wishes')
 export class WishesController {
@@ -39,14 +43,42 @@ export class WishesController {
   findOne(@Param('id') id: string) {
     return this.wishesService.findOne(+id);
   }
-
+  @UseGuards(JwtGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
-    return this.wishesService.update(+id, updateWishDto);
+  async update(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() updateWishDto: UpdateWishDto,
+  ) {
+    const wish = await this.wishesService.findOne(+id);
+    if (isOwner(req.user.id, wish.owner.id)) {
+      return await this.wishesService.update(+id, updateWishDto);
+    }
+    throw new ForbiddenException();
   }
-
+  @UseGuards(JwtGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishesService.remove(+id);
+  async remove(@Req() req, @Param('id') id: string) {
+    const wish = await this.wishesService.findOne(+id);
+    if (isOwner(req.user.id, wish.owner.id)) {
+      return this.wishesService.remove(+id);
+    }
+    throw new ForbiddenException();
+  }
+  @UseGuards(JwtGuard)
+  @Post(':id/copy')
+  async copy(@Req() req, @Param('id') id: string) {
+    const wish = await this.wishesService.findOne(+id);
+    if (isOwner(req.user.id, wish.owner.id)) {
+      throw new ConflictException();
+    }
+    const copyWish = {
+      name: wish.name,
+      image: wish.image,
+      link: wish.link,
+      price: wish.price,
+      description: wish.description,
+    };
+    return this.wishesService.create(req.user, copyWish);
   }
 }

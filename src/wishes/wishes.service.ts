@@ -68,11 +68,11 @@ export class WishesService {
     });
   }
 
-  update(id: number, updateWishDto: UpdateWishDto) {
-    return `This action updates a #${id} wish`;
+  async update(id: number, updateWishDto: UpdateWishDto) {
+    return await this.wishRepository.update(id, updateWishDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wish`;
+  async remove(id: number) {
+    return await this.wishRepository.delete({ id });
   }
 }
