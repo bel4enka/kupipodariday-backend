@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, Length, MinLength } from 'class-validator';
+import { IsNotEmpty, Length } from 'class-validator';
 
 export class CreateWishDto {
   @IsNotEmpty()

@@ -52,7 +52,6 @@ export class WishesService {
   }
 
   async findOne(wishId: number): Promise<Wish> {
-    console.log(wishId);
     return await this.wishRepository.findOne({
       where: {
         id: wishId,
@@ -61,15 +60,18 @@ export class WishesService {
         owner: {
           wishes: true,
           wishLists: true,
-          offers: true,
         },
-        offers: true,
+        offers: {
+          user: true,
+          item: true,
+        },
       },
     });
   }
 
-  async update(id: number, updateWishDto: UpdateWishDto) {
-    return await this.wishRepository.update(id, updateWishDto);
+  async update(id: number, ...param) {
+    //вместо param тут было UpdateWishDto, но не поняла как менять отдельно copied
+    return await this.wishRepository.update(id, param[0]);
   }
 
   async remove(id: number) {

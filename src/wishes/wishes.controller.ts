@@ -7,17 +7,16 @@ import {
   Param,
   Delete,
   UseGuards,
-  Req, ForbiddenException,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { JwtGuard } from '../guards/jwt.guard';
 import { Wish } from './entities/wish.entity';
-import {isOwner} from "../utils/utils";
-import {
-  ConflictException
-} from "@nestjs/common/exceptions/conflict.exception";
+import { isOwner } from '../utils/utils';
+import { ConflictException } from '@nestjs/common/exceptions/conflict.exception';
 
 @Controller('wishes')
 export class WishesController {
@@ -43,6 +42,7 @@ export class WishesController {
   findOne(@Param('id') id: string) {
     return this.wishesService.findOne(+id);
   }
+
   @UseGuards(JwtGuard)
   @Patch(':id')
   async update(
@@ -79,6 +79,7 @@ export class WishesController {
       price: wish.price,
       description: wish.description,
     };
-    return this.wishesService.create(req.user, copyWish);
+    await this.wishesService.create(req.user, copyWish);
+    await this.wishesService.update(wish.id, { copied: +1 });
   }
 }

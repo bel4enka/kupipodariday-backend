@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  OneToMany,
   ManyToMany,
 } from 'typeorm';
 import { IsUrl, Length, MaxLength} from 'class-validator';
