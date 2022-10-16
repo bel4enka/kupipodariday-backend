@@ -8,8 +8,8 @@ import { Profile } from 'passport-yandex';
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
-    private usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
   ) {}
 
   auth(user: User) {
@@ -21,13 +21,11 @@ export class AuthService {
     const user = await this.usersService.findByUsername(username);
 
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException('неправильное имя или пароль');
     }
 
     return bcrypt.compare(password, user.password).then((matched) => {
       if (!matched) {
-        console.log(password);
-        console.log(user.password);
         return null;
       }
 
@@ -38,7 +36,6 @@ export class AuthService {
   async validateFromYandex(yandexProfile: Profile) {
     const user = await this.usersService.findByYandexID(yandexProfile.email);
 
-    /* Если пользователь не найден, создадим его */
     if (!user) {
       return await this.usersService.createFromYandex(yandexProfile);
     }

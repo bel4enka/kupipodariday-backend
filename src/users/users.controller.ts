@@ -58,7 +58,6 @@ export class UsersController {
   async findWishesByUserName(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
     const wish = await this.wishesService.findWishesByUserId(user.id);
-    console.log(wish);
     return wish;
   }
 

@@ -5,9 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  ManyToMany,
+  ManyToMany, JoinTable,
 } from 'typeorm';
-import { IsUrl, Length, MaxLength} from 'class-validator';
+import {IsOptional, IsUrl, Length} from 'class-validator';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { User } from '../../users/entities/user.entity';
 
@@ -21,16 +21,13 @@ export class WishList {
   name: string;
 
   @Column()
-  @MaxLength(1500, {
-    message: 'Слишком большое описание',
-  })
-  description: string;
-
-  @Column()
   @IsUrl()
+  @IsOptional()
   image: string;
 
   @ManyToMany(() => Wish)
+  @JoinTable()
+  @IsOptional()
   items: Wish[];
 
   @ManyToOne(() => User, (user) => user.wishLists)

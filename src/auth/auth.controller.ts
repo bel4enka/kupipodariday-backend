@@ -24,7 +24,6 @@ export class AuthController {
       const user = await this.usersService.create(createUserDto);
       return this.authService.auth(user);
     } catch (err) {
-      console.log(err.detail);
       throw err.detail;
     }
   }

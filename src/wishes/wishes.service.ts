@@ -3,7 +3,7 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { In, MoreThan, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
@@ -48,6 +48,12 @@ export class WishesService {
     return this.wishRepository.find({
       where: { owner: { id: userId } },
       order: { updateAt: 'DESC' },
+    });
+  }
+
+  async findManyByIds(createWishlistDto) {
+    return await this.wishRepository.find({
+      where: { id: In(createWishlistDto.itemsId || []) },
     });
   }
 

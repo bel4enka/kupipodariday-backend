@@ -21,6 +21,9 @@ export class OffersService {
   async create(user: User, createOfferDto: CreateOfferDto) {
     const wishes = await this.wishesService.findOne(createOfferDto.itemId);
     const { id } = user;
+    if (createOfferDto.amount < 0) {
+      throw new BadRequestException('вложение не может быть отрицательным');
+    }
     if (isOwner(id, wishes.owner.id)) {
       throw new BadRequestException('вы автор');
     }
@@ -60,7 +63,7 @@ export class OffersService {
         item: true,
         user: true,
       },
-      where: {id},
+      where: { id },
     });
   }
 }
