@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
-import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
 import { In, MoreThan, Repository } from 'typeorm';
@@ -48,6 +47,16 @@ export class WishesService {
     return this.wishRepository.find({
       where: { owner: { id: userId } },
       order: { updateAt: 'DESC' },
+      relations: {
+        owner: {
+          wishes: true,
+          wishLists: true,
+        },
+        offers: {
+          user: true,
+          item: true,
+        },
+      },
     });
   }
 

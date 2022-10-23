@@ -1,15 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  ParseIntPipe,
+  Get,
   NotFoundException,
-  UseGuards,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -34,7 +34,7 @@ export class UsersController {
 
   @UseGuards(JwtGuard)
   @Get('me')
-  findUser(@Req() req: any) {
+  async findUser(@Req() req: any) {
     const { username } = req.user;
     return this.usersService.findByUsername(username);
   }
@@ -42,8 +42,18 @@ export class UsersController {
   @UseGuards(JwtGuard)
   @Get(':username')
   async findUserByUserName(@Param('username') username: string) {
-    const user = await this.usersService.findByUsername(username);
-    return user;
+    return this.usersService.findByUsername(username);
+    // return {
+    //   id: user.id,
+    //   username: user.username,
+    //   about: user.about,
+    //   avatar: user.avatar,
+    //   email: user.email,
+    //   createdAt: user.createdAt,
+    //   updatedAt: user.updateAt,
+    //   wishes: user.wishes,
+    //   wishlists: user.wishLists,
+    // };
   }
 
   @UseGuards(JwtGuard)
@@ -57,8 +67,7 @@ export class UsersController {
   @Get(':username/wishes')
   async findWishesByUserName(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
-    const wish = await this.wishesService.findWishesByUserId(user.id);
-    return wish;
+    return await this.wishesService.findWishesByUserId(user.id);
   }
 
   @UseGuards(JwtGuard)

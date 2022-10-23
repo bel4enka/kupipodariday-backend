@@ -1,12 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
 import { WishesService } from '../wishes/wishes.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Wish } from '../wishes/entities/wish.entity';
 import { Repository } from 'typeorm';
 import { Offer } from './entities/offer.entity';
-import { UsersService } from '../users/users.service';
 import { isOwner } from '../utils/utils';
 import { User } from '../users/entities/user.entity';
 

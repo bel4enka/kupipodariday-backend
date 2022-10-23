@@ -5,9 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  ManyToMany, JoinTable,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
-import {IsOptional, IsUrl, Length} from 'class-validator';
+import { IsOptional, IsUrl, Length } from 'class-validator';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { User } from '../../users/entities/user.entity';
 

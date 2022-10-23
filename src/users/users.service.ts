@@ -34,8 +34,8 @@ export class UsersService {
     return this.userRepository.findOneBy({ id });
   }
 
-  async findByUsername(username: string) {
-    const user = await this.userRepository.findOne({
+  async findByUsername(username: string, removePass = true): Promise<any> {
+    const found = await this.userRepository.findOne({
       where: {
         username: username,
       },
@@ -44,7 +44,7 @@ export class UsersService {
         wishLists: true,
       },
     });
-    return user;
+    return !removePass ? this.userWithPassword(username) : found;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -79,5 +79,15 @@ export class UsersService {
 
   async createFromYandex(profile: any) {
     return this.userRepository.save(profile);
+  }
+
+  async userWithPassword(username) {
+    const queryBuilder = await this.userRepository
+      .createQueryBuilder()
+      .select('user')
+      .from(User, 'user')
+      .where(`user.username = :username`, { username: `${username}` })
+      .addSelect('user.password');
+    return await queryBuilder.getOne();
   }
 }

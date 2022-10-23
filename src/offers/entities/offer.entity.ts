@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { User } from '../../users/entities/user.entity';
-import { IsNotEmpty } from 'class-validator';
 
 @Entity()
 export class Offer {

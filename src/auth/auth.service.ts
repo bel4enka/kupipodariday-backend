@@ -18,8 +18,7 @@ export class AuthService {
   }
 
   async validatePassword(username: string, password: string) {
-    const user = await this.usersService.findByUsername(username);
-
+    const user = await this.usersService.findByUsername(username, false);
     if (!user) {
       throw new NotFoundException('неправильное имя или пароль');
     }

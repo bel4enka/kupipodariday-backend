@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
@@ -60,6 +61,11 @@ export class WishesController {
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     const wish = await this.wishesService.findOne(+id);
+    if (wish.offers.length) {
+      throw new BadRequestException(
+        'Этот подарок уже поддержали. Удалить нельзя!',
+      );
+    }
     if (isOwner(req.user.id, wish.owner.id)) {
       return this.wishesService.remove(+id);
     }
