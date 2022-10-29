@@ -8,24 +8,30 @@ import {
 } from 'typeorm';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { User } from '../../users/entities/user.entity';
+import { IsNotEmpty, IsOptional, NotEquals } from 'class-validator';
 
 @Entity()
 export class Offer {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @IsNotEmpty()
   @ManyToOne(() => Wish, (wish) => wish.offers)
   item: Wish;
 
+  @IsNotEmpty()
   @ManyToOne(() => User, (user) => user.offers)
   user: User;
 
+  @IsNotEmpty()
+  @NotEquals(0)
   @Column()
   amount: number;
 
   @Column({
     default: false,
   })
+  @IsOptional()
   hidden: boolean;
 
   @CreateDateColumn()

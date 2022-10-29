@@ -20,6 +20,7 @@ import { Wish } from '../wishes/entities/wish.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateResult } from 'typeorm';
 
+@UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -27,55 +28,34 @@ export class UsersController {
     private readonly wishesService: WishesService,
   ) {}
 
-  @Post()
-  async create(@Body() user: CreateUserDto) {
-    return this.usersService.create(user);
-  }
-
-  @UseGuards(JwtGuard)
   @Get('me')
   async findUser(@Req() req: any) {
     const { username } = req.user;
     return this.usersService.findByUsername(username);
   }
 
-  @UseGuards(JwtGuard)
   @Get(':username')
   async findUserByUserName(@Param('username') username: string) {
     return this.usersService.findByUsername(username);
-    // return {
-    //   id: user.id,
-    //   username: user.username,
-    //   about: user.about,
-    //   avatar: user.avatar,
-    //   email: user.email,
-    //   createdAt: user.createdAt,
-    //   updatedAt: user.updateAt,
-    //   wishes: user.wishes,
-    //   wishlists: user.wishLists,
-    // };
   }
 
-  @UseGuards(JwtGuard)
   @Get('me/wishes')
   findWishesMyUser(@Req() req): Promise<Wish[]> {
     const { id } = req.user;
     return this.wishesService.findWishesByUserId(id);
   }
 
-  @UseGuards(JwtGuard)
   @Get(':username/wishes')
   async findWishesByUserName(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
     return await this.wishesService.findWishesByUserId(user.id);
   }
 
-  @UseGuards(JwtGuard)
   @Get()
   findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
-  @UseGuards(JwtGuard)
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
@@ -86,7 +66,6 @@ export class UsersController {
     return this.usersService.findUsers(user);
   }
 
-  @UseGuards(JwtGuard)
   @Patch('me')
   async update(
     @Req() req,
@@ -94,14 +73,5 @@ export class UsersController {
   ): Promise<UpdateResult> {
     const { id } = req.user;
     return this.usersService.update(id, updateUserDto);
-  }
-  @UseGuards(JwtGuard)
-  @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.usersService.findOne(id);
-    if (!user) {
-      throw new NotFoundException('такого пользователя нет');
-    }
-    return this.usersService.remove(+id);
   }
 }
